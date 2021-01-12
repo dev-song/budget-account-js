@@ -1,16 +1,25 @@
 import React, { useState } from 'react';
 
 import Landing from './views/Landing';
+import Account from './views/Account';
 
 const App = () => {
   const [month, setMonth] = useState(null);
 
   return (
-    <div className='App'>
-      <Landing
-        {...{ setMonth }}
-      />
-    </div>
+    <main className='App'>
+      {!month &&
+        <Landing
+          {...{ setMonth }}
+        />
+      }
+
+      {month && (
+        <Account
+          {...{ month }}
+        />
+      )}
+    </main>
   );
 }
 
