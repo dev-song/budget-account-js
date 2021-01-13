@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
+
+import AccountTable from './components/AccountTable';
 
 const COLUMN_INFO = [
   {
@@ -28,30 +30,14 @@ const Account = ({ month }) => {
     <>
       <h1>{month}월 가계부</h1>
       <section>
-        {COLUMN_INFO.map(typeData => {
-          const { title, columns } = typeData;
-          const columnNames = Object.values(columns);
+        {COLUMN_INFO.map((typeData, index) => {
+          const { title } = typeData;
 
           return (
-            <>
+            <div key={index}>
               <h1>{title}</h1>
-              <table>
-                <thead>
-                  <tr>
-                    {columnNames.map((name, index) => (
-                      <th key={index}>{name}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    {columnNames.map((name, index) => (
-                      <td key={index}><input /></td>
-                    ))}
-                  </tr>
-                </tbody>
-              </table>
-            </>
+              <AccountTable {...{ typeData }} />
+            </div>
           );
         })}
       </section>
