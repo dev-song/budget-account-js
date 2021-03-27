@@ -1,72 +1,59 @@
 import React, { useEffect, useState } from 'react';
 
 const ROW_DATA = {
-  date: '',
-  amount: '',
-  detail: '',
-  category: '',
-  memo: '',
+  date: { type: 'date', value: '' },
+  amount: { type: 'number', value: '' },
+  detail: { type: 'text', value: '' },
+  category: { type: 'text', value: '' },
+  memo: { type: 'text', value: '' },
 };
 
-const AccountTable = ({ typeData: { columns } }) => {
+const AccountTable = ({ columns }) => {
   const [columnNames, setColumnNames] = useState(null);
-  const [expense, setExpense] = useState([ROW_DATA]);
+  const [accountDetail, setAccountDetail] = useState([ROW_DATA]);
 
   useEffect(() => {
     if (!columns) return;
 
-    console.log(columns);
     setColumnNames(Object.values(columns));
   }, [columns]);
+
+  const updateAccountDetail = (e, rowData, rowIndex, columnName) => {
+    const updatedDetail = accountDetail.map((detail, index) =>
+      index !== rowIndex
+        ? detail
+        : { ...rowData, [columnName]: { ...rowData[columnName], value: e.target.value } },
+    );
+    setAccountDetail(updatedDetail);
+  };
 
   return (
     <>
       <table>
         <thead>
           <tr>
-            {columnNames.map((name, index) => (
-              <th key={index}>{name}</th>
-            ))}
+            {columnNames &&
+              columnNames.map((name, index) => <th key={`${index}-${name}`}>{name}</th>)}
           </tr>
         </thead>
         <tbody>
-          {expense.map((row, rowIndex) => (
-            <tr>
-              {Object.keys(row).map((column, columnIndex) => {
-                const handleInputChange = (e) => setExpense(expense.map((expenseItem, expenseItemIndex) => {
-                  if (expenseItemIndex === rowIndex) {
-                    return {
-                      ...row,
-                      [column]: e.target.value,
-                    };
-                  }
-
-                  return expenseItem;
-                }));
-
-                return (
-                  <td>
-                    <input
-                      value={row[column]}
-                      onChange={handleInputChange}
-                    />
-                  </td>
-                );
-              })}
+          {accountDetail.map((row, rowIndex) => (
+            <tr key={`${rowIndex}`}>
+              {Object.entries(row).map(([column, { type, value }], index) => (
+                <td key={`${index}-${column}`}>
+                  <input
+                    {...{ type, value }}
+                    onChange={(e) => updateAccountDetail(e, row, rowIndex, column)}
+                  />
+                </td>
+              ))}
             </tr>
           ))}
         </tbody>
       </table>
-      <button
-        onClick={() => setExpense([
-          ...expense,
-          ROW_DATA,
-        ])}
-      >
-        추가
-      </button>
+      <button onClick={() => setAccountDetail([...accountDetail, ROW_DATA])}>추가</button>
     </>
   );
-}
+};
 
 export default AccountTable;

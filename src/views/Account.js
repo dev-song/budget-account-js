@@ -21,8 +21,8 @@ const COLUMN_INFO = [
       detail: '지출 내역',
       category: '분류',
       memo: '비고',
-    }
-  }
+    },
+  },
 ];
 
 const Account = ({ month }) => {
@@ -31,18 +31,18 @@ const Account = ({ month }) => {
       <h1>{month}월 가계부</h1>
       <section>
         {COLUMN_INFO.map((typeData, index) => {
-          const { title } = typeData;
+          const { title, columns } = typeData;
 
           return (
             <div key={index}>
               <h1>{title}</h1>
-              <AccountTable {...{ typeData }} />
+              <AccountTable {...{ columns }} />
             </div>
           );
         })}
       </section>
     </>
   );
-}
+};
 
 export default Account;
