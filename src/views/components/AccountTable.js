@@ -27,6 +27,13 @@ const AccountTable = ({ columns }) => {
     setAccountDetail(updatedDetail);
   };
 
+  const deleteAccountDetail = (targetRowIndex) => {
+    const accountDetailExceptTargetRow = accountDetail.filter(
+      (detail, index) => index !== targetRowIndex,
+    );
+    setAccountDetail(accountDetailExceptTargetRow);
+  };
+
   return (
     <>
       <table>
@@ -47,6 +54,11 @@ const AccountTable = ({ columns }) => {
                   />
                 </td>
               ))}
+              {rowIndex !== 0 && (
+                <td>
+                  <button onClick={(e) => deleteAccountDetail(rowIndex)}>X</button>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>
