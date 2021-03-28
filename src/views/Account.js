@@ -36,7 +36,7 @@ const Account = ({ month }) => {
           return (
             <div key={index}>
               <h1>{title}</h1>
-              <AccountTable {...{ columns }} />
+              <AccountTable {...{ title, columns }} />
             </div>
           );
         })}

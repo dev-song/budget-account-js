@@ -8,7 +8,7 @@ const ROW_DATA = {
   memo: { type: 'text', value: '' },
 };
 
-const AccountTable = ({ columns }) => {
+const AccountTable = ({ title, columns }) => {
   const [columnNames, setColumnNames] = useState(null);
   const [accountDetail, setAccountDetail] = useState([ROW_DATA]);
 
@@ -32,6 +32,12 @@ const AccountTable = ({ columns }) => {
       (detail, index) => index !== targetRowIndex,
     );
     setAccountDetail(accountDetailExceptTargetRow);
+  };
+
+  const saveAccount = () => {
+    const localStorage = window.localStorage;
+    const saveKey = title === '수입' ? 'income' : 'expense';
+    localStorage.setItem(saveKey, JSON.stringify(accountDetail));
   };
 
   return (
@@ -64,6 +70,7 @@ const AccountTable = ({ columns }) => {
         </tbody>
       </table>
       <button onClick={() => setAccountDetail([...accountDetail, ROW_DATA])}>추가</button>
+      <button onClick={saveAccount}>저장</button>
     </>
   );
 };
