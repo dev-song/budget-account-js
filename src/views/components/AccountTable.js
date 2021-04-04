@@ -12,6 +12,12 @@ const AccountTable = ({ title, columns }) => {
   const [columnNames, setColumnNames] = useState(null);
   const [accountDetail, setAccountDetail] = useState([ROW_DATA]);
 
+  const localStorageKey = title === '수입' ? 'income' : 'expense';
+
+  useEffect(() => {
+    loadAccount();
+  }, []);
+
   useEffect(() => {
     if (!columns) return;
 
@@ -34,10 +40,17 @@ const AccountTable = ({ title, columns }) => {
     setAccountDetail(accountDetailExceptTargetRow);
   };
 
+  const loadAccount = () => {
+    const localStorage = window.localStorage;
+    const previousData = localStorage.getItem(localStorageKey);
+
+    if (!previousData) return;
+    setAccountDetail(JSON.parse(previousData));
+  };
+
   const saveAccount = () => {
     const localStorage = window.localStorage;
-    const saveKey = title === '수입' ? 'income' : 'expense';
-    localStorage.setItem(saveKey, JSON.stringify(accountDetail));
+    localStorage.setItem(localStorageKey, JSON.stringify(accountDetail));
   };
 
   return (
@@ -62,7 +75,7 @@ const AccountTable = ({ title, columns }) => {
               ))}
               {rowIndex !== 0 && (
                 <td>
-                  <button onClick={(e) => deleteAccountDetail(rowIndex)}>X</button>
+                  <button onClick={() => deleteAccountDetail(rowIndex)}>X</button>
                 </td>
               )}
             </tr>
