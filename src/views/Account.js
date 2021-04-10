@@ -12,12 +12,14 @@ const COLUMN_INFO = {
 
 const TABLE_INFO = [
   {
-    title: '수입',
-    columns: COLUMN_INFO,
+    type: 'income',
+    label: '수입',
+    columns: [COLUMN_INFO],
   },
   {
-    title: '지출',
-    columns: COLUMN_INFO,
+    type: 'expense',
+    label: '지출',
+    columns: [COLUMN_INFO],
   },
 ];
 
@@ -49,12 +51,15 @@ const Account = ({ month }) => {
       <section>
         <button onClick={saveAccount}>전체 저장</button>
         {account.map((tableData, index) => {
-          const { title, columns } = tableData;
+          const { type, label, columns } = tableData;
 
           return (
             <div key={index}>
-              <h1>{title}</h1>
-              <AccountTable {...{ title, columns, account, setAccount }} />
+              <h1>{label}</h1>
+              <AccountTable
+                {...{ type, columns, account, setAccount }}
+                columnFormat={COLUMN_INFO}
+              />
             </div>
           );
         })}
