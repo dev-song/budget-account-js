@@ -1,43 +1,41 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
-const ROW_DATA = {
-  date: { type: 'date', value: '' },
-  amount: { type: 'number', value: '' },
-  detail: { type: 'text', value: '' },
-  category: { type: 'text', value: '' },
-  memo: { type: 'text', value: '' },
-};
+const AccountTable = ({ type, columns, columnFormat, account, setAccount }) => {
+  const [incomeData, expenseData] = account;
+  const columnNames = Object.values(columnFormat).map(({ label }) => label);
 
-const AccountTable = ({ title, columns }) => {
-  const [columnNames, setColumnNames] = useState(null);
-  const [accountDetail, setAccountDetail] = useState([ROW_DATA]);
-
-  useEffect(() => {
-    if (!columns) return;
-
-    setColumnNames(Object.values(columns));
-  }, [columns]);
-
-  const updateAccountDetail = (e, rowData, rowIndex, columnName) => {
-    const updatedDetail = accountDetail.map((detail, index) =>
+  const updateAccount = (e, rowData, rowIndex, columnName) => {
+    const updatedDetail = columns.map((detail, index) =>
       index !== rowIndex
         ? detail
         : { ...rowData, [columnName]: { ...rowData[columnName], value: e.target.value } },
     );
-    setAccountDetail(updatedDetail);
+
+    if (type === 'income') {
+      setAccount([{ ...incomeData, columns: updatedDetail }, expenseData]);
+      return;
+    }
+
+    setAccount([incomeData, { ...expenseData, columns: updatedDetail }]);
   };
 
-  const deleteAccountDetail = (targetRowIndex) => {
-    const accountDetailExceptTargetRow = accountDetail.filter(
-      (detail, index) => index !== targetRowIndex,
-    );
-    setAccountDetail(accountDetailExceptTargetRow);
+  const addAccountRow = () => {
+    if (type === 'income') {
+      setAccount([{ ...incomeData, columns: [...incomeData.columns, columnFormat] }, expenseData]);
+      return;
+    }
+    setAccount([incomeData, { ...expenseData, columns: [...expenseData.columns, columnFormat] }]);
   };
 
-  const saveAccount = () => {
-    const localStorage = window.localStorage;
-    const saveKey = title === '수입' ? 'income' : 'expense';
-    localStorage.setItem(saveKey, JSON.stringify(accountDetail));
+  const deleteAccountRow = (targetRowIndex) => {
+    const detailWithoutTargetRow = columns.filter((detail, index) => index !== targetRowIndex);
+
+    if (type === 'income') {
+      setAccount([{ ...incomeData, columns: detailWithoutTargetRow }, expenseData]);
+      return;
+    }
+
+    setAccount([incomeData, { ...expenseData, columns: detailWithoutTargetRow }]);
   };
 
   return (
@@ -50,27 +48,27 @@ const AccountTable = ({ title, columns }) => {
           </tr>
         </thead>
         <tbody>
-          {accountDetail.map((row, rowIndex) => (
-            <tr key={`${rowIndex}`}>
-              {Object.entries(row).map(([column, { type, value }], index) => (
-                <td key={`${index}-${column}`}>
-                  <input
-                    {...{ type, value }}
-                    onChange={(e) => updateAccountDetail(e, row, rowIndex, column)}
-                  />
-                </td>
-              ))}
-              {rowIndex !== 0 && (
-                <td>
-                  <button onClick={(e) => deleteAccountDetail(rowIndex)}>X</button>
-                </td>
-              )}
-            </tr>
-          ))}
+          {columns &&
+            columns.map((row, rowIndex) => (
+              <tr key={`${rowIndex}`}>
+                {Object.entries(row).map(([column, { type, value }], index) => (
+                  <td key={`${index}-${column}`}>
+                    <input
+                      {...{ type, value }}
+                      onChange={(e) => updateAccount(e, row, rowIndex, column)}
+                    />
+                  </td>
+                ))}
+                {rowIndex !== 0 && (
+                  <td>
+                    <button onClick={() => deleteAccountRow(rowIndex)}>X</button>
+                  </td>
+                )}
+              </tr>
+            ))}
         </tbody>
       </table>
-      <button onClick={() => setAccountDetail([...accountDetail, ROW_DATA])}>추가</button>
-      <button onClick={saveAccount}>저장</button>
+      <button onClick={addAccountRow}>추가</button>
     </>
   );
 };
